@@ -2859,7 +2859,7 @@ int zEulerSweep(int j, int NumberOfSubgrids, fluxes *SubgridFluxes[],
   int SaveMHDSubgridFluxes(fluxes *SubgridFluxes[], int NumberOfSubgrids,
 			   float *Flux3D[], int flux, float fluxcoef, float dt);
   int SetFloor();
-  int SetFloor_EvolveLevel()
+  int SetFloor_EvolveLevel();
 
   /* Poisson clean routines */
 

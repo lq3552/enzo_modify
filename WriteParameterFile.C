@@ -597,6 +597,10 @@ int WriteParameterFile(FILE *fptr, TopGridData &MetaData, char *name = NULL)
 	  UseMinimumPressureSupport);
   fprintf(fptr, "MinimumPressureSupportParameter  = %"FSYM"\n",
 	  MinimumPressureSupportParameter);
+  fprintf(fptr, "UseGasTemperatureFloor = %"ISYM"\n",
+	  UseGasTemperatureFloor);
+  fprintf(fptr, "GasTemperatureFloor = %"FSYM"\n",
+	  GasTemperatureFloor);
   fprintf(fptr, "RefineByJeansLengthSafetyFactor  = %"FSYM"\n",
 	  RefineByJeansLengthSafetyFactor);
   fprintf(fptr, "JeansRefinementColdTemperature  = %"FSYM"\n",

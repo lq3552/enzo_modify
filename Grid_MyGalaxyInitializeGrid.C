@@ -65,10 +65,11 @@ int grid::MyGalaxyInitializeGrid(FLOAT DiskRadius,
 {
  /* declarations */
 	
-  int dim, i, j, k, m, field, disk, size, MetalNum, MetalIaNum, vel;
+  int dim, i, j, k, m, field, disk, size=1, MetalNum, MetalIaNum, vel;
  int DeNum, HINum, HIINum, HeINum, HeIINum, HeIIINum, HMNum, H2INum, H2IINum,
    DINum, DIINum, HDINum, B1Num, B2Num, B3Num, PhiNum,G0Num,ZetaNum;
  float DiskDensity, DiskVelocityMag;
+ float Scale[3];
 
   /* Record field type for FindField */
 
@@ -146,9 +147,9 @@ int grid::MyGalaxyInitializeGrid(FLOAT DiskRadius,
 
  /* compute size of fields */
 
- size = 1;
  for (dim = 0; dim < GridRank; dim++){
     size *= GridDimension[dim];
+	Scale[i]=(GridRightEdge[i]-GridLeftEdge[i])/(GridDimension[i]-2*NumberOfGhostZones);
  }
  /* allocate fields */
  
@@ -190,17 +191,44 @@ int grid::MyGalaxyInitializeGrid(FLOAT DiskRadius,
  printf("soundspeed=%lf\n",EOSSoundSpeed);
  printf("ExternalGravityConstant=%lf\n",ExternalGravityConstant);
  
- /* MHD specific field initialize, uniformfield to start with */
- float UniformField[3] = {1e-9,0,0}; ///!!! Will become another parameter in later version!
- if(UseMHDCT == TRUE){
-   for ( int field=0; field < 3; field++ ){
-	   printf("UniformB=%g\n",UniformField[field]/MagneticUnits);
-     for (i=0; i<MagneticSize[field]; i++ ){
-       MagneticField[field][i] = UniformField[field]/MagneticUnits;
-     }
-   }
- this->CenterMagneticField();
- }
+ printf("UseMHDCT = %d\n",UseMHDCT);
+ /* MHD specific field initialize */
+ if(UseMHDCT){
+	 if (B0Flag == 1){ // Uniform field
+
+		float UniformField[3] = {B0Strength,0,0}; ///!!! Will become another parameter in later version!
+		for ( int field=0; field < 3; field++ ){
+			for (i=0; i<MagneticSize[field]; i++ ){
+				MagneticField[field][i] = UniformField[field]/MagneticUnits;
+			}
+		}
+	 }
+	 else if (B0Flag == 2){ //Toroidal field
+		float X,Y,Z,R,rc = 0.002*Mpc;
+		int index,field = 2;
+		for( k=0;k<ElectricDims[field][2];k++)
+			for( j=0;j<ElectricDims[field][1];j++)
+				for( i=0;i<ElectricDims[field][0];i++){
+					index = i+ElectricDims[field][0]*(j+ElectricDims[field][1]*k);
+					X = (i-GridStartIndex[0])*Scale[0]-0.5;
+					Y = (j-GridStartIndex[1])*Scale[1]-0.5;
+					Z = (k-GridStartIndex[2])*Scale[2]-0.5;
+					R = sqrt(POW(X,2)+POW(Y,2));
+					if (R*LengthUnits > rc)
+						ElectricField[field][index] = -B0Strength*R;
+					else
+						ElectricField[field][index] = -B0Strength/rc/LengthUnits*R*R;
+				}
+		if( this->MHD_Curl(GridStartIndex, GridEndIndex, 0) == FAIL ){
+			fprintf(stderr," error occored in MHD_Curl\n"); 
+			return FAIL;
+		}
+	 }
+	 this->CenterMagneticField();
+	 float *DivB=NULL;
+	 MHD_Diagnose("Post Initialize Grid", DivB);
+ } // end if(UseMHDCT)
+
  /* loop begin grids */
  for (k = 0; k < GridDimension[2]; k++)
    for (j = 0; j < GridDimension[1]; j++)
@@ -389,12 +417,6 @@ int grid::MyGalaxyInitializeGrid(FLOAT DiskRadius,
 	    BaryonField[B3Num][n] = 0.1;
         BaryonField[PhiNum][n] = 0.0;
 	}
-    if(HydroMethod == MHD_Li){
-        BaryonField[B1Num][n] = CenteredB[0][n];
-        BaryonField[B2Num][n] = CenteredB[1][n];
-        BaryonField[B3Num][n] = CenteredB[2][n];
-		//printf("Bfield=%g %g %g\n",BaryonField[B1Num][n],BaryonField[B2Num][n],BaryonField[B3Num][n]);
-    }
 
 	/* Set Velocities. */
 

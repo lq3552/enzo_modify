@@ -56,9 +56,9 @@ int MyGalaxyInitialize(FILE *fptr, FILE *Outfptr,
   char *Vel3Name = "z-velocity";
   char *G0Name = "G0";
   char *ZetaName = "Zeta";
-  char *B1Name = "B1";
-  char *B2Name = "B2";
-  char *B3Name = "B3";
+  char *B1Name = "Bx";
+  char *B2Name = "By";
+  char *B3Name = "Bz";
   char *PhiName = "Phi";
   char *MetalName = "Metal_Density";
   char *MetalIaName = "MetalSNIa_Density";
@@ -105,7 +105,6 @@ int MyGalaxyInitialize(FILE *fptr, FILE *Outfptr,
   float GalaxySimulationB0FieldStrength;
   
   FLOAT LeftEdge[MAX_DIMENSION], RightEdge[MAX_DIMENSION];
-  float ZeroBField[3] = {0.0, 0.0, 0.0};
 
   /* Default Values */
 
@@ -224,12 +223,10 @@ int MyGalaxyInitialize(FILE *fptr, FILE *Outfptr,
    printf("%s\n",DataLabel[mm]);
     
 if (UseMHDCT){
-   MHDcLabel[0] = "Bx";
-   MHDcLabel[1] = "By";
-   MHDcLabel[2] = "Bz";
    MHDLabel[0] = "BxF";
    MHDLabel[1] = "ByF";
    MHDLabel[2] = "BzF";
+   
    MHDeLabel[0] = "Ex";
    MHDeLabel[1] = "Ey";
    MHDeLabel[2] = "Ez";
@@ -237,6 +234,7 @@ if (UseMHDCT){
    MHDUnits[0] = "None";
    MHDUnits[1] = "None";
    MHDUnits[2] = "None";
+  
    MHDeUnits[0] = "None";
    MHDeUnits[1] = "None";
    MHDeUnits[2] = "None";

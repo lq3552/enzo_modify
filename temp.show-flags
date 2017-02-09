@@ -11,11 +11,11 @@ DEFINES = -DLINUX -DH5_USE_16_API   -D__max_subgrids=100000 -D__max_baryons=30 -
 INCLUDES = -I/apps/hdf5/1.8.9/include  -I/apps/gcc/5.2.0/libz/1.2.8/include        -I/ufrc/tan/pg3552/local/include    -I.
 
 CPPFLAGS = -P -traditional 
-CFLAGS   =  -g
-CXXFLAGS =  -g
-FFLAGS   = -fno-second-underscore -ffixed-line-length-132 -g
-F90FLAGS = -fno-second-underscore -g
-LDFLAGS  =  -g
+CFLAGS   =  -O2
+CXXFLAGS =  -O2
+FFLAGS   = -fno-second-underscore -ffixed-line-length-132 -O2
+F90FLAGS = -fno-second-underscore -O2
+LDFLAGS  =  -O2
 
 LIBS     = -L/apps/hdf5/1.8.9/lib -lhdf5 -lz  -lgfortran  -L/apps/gcc/5.2.0/libz/1.2.8/lib -lz        -L/ufrc/tan/pg3552/local/lib -lgrackle
 

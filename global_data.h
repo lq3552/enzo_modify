@@ -502,6 +502,10 @@ EXTERN float ZEUSQuadraticArtificialViscosity;
 EXTERN int UseMinimumPressureSupport;
 EXTERN float MinimumPressureSupportParameter;
 
+/* Parameters for GasTemperatureFloor.*/
+EXTERN int UseGasTemperatureFloor;
+EXTERN float GasTemperatureFloor;
+
 /* Parameters for statically refined regions. */
 EXTERN FLOAT StaticRefineRegionLeftEdge[MAX_STATIC_REGIONS][MAX_DIMENSION];
 EXTERN FLOAT StaticRefineRegionRightEdge[MAX_STATIC_REGIONS][MAX_DIMENSION];
