@@ -149,7 +149,7 @@ int grid::MyGalaxyInitializeGrid(FLOAT DiskRadius,
 
  for (dim = 0; dim < GridRank; dim++){
     size *= GridDimension[dim];
-	Scale[i]=(GridRightEdge[i]-GridLeftEdge[i])/(GridDimension[i]-2*NumberOfGhostZones);
+	Scale[dim]=(GridRightEdge[dim]-GridLeftEdge[dim])/(GridDimension[dim]-2*NumberOfGhostZones);
  }
  /* allocate fields */
  
@@ -195,35 +195,138 @@ int grid::MyGalaxyInitializeGrid(FLOAT DiskRadius,
  /* MHD specific field initialize */
  if(UseMHDCT){
 	 if (B0Flag == 1){ // Uniform field
-
 		float UniformField[3] = {B0Strength,0,0}; ///!!! Will become another parameter in later version!
 		for ( int field=0; field < 3; field++ ){
 			for (i=0; i<MagneticSize[field]; i++ ){
 				MagneticField[field][i] = UniformField[field]/MagneticUnits;
 			}
 		}
-	 }
+	 } //end if 1
 	 else if (B0Flag == 2){ //Toroidal field
-		float X,Y,Z,R,rc = 0.002*Mpc;
-		int index,field = 2;
-		for( k=0;k<ElectricDims[field][2];k++)
-			for( j=0;j<ElectricDims[field][1];j++)
-				for( i=0;i<ElectricDims[field][0];i++){
-					index = i+ElectricDims[field][0]*(j+ElectricDims[field][1]*k);
-					X = (i-GridStartIndex[0])*Scale[0]-0.5;
-					Y = (j-GridStartIndex[1])*Scale[1]-0.5;
-					Z = (k-GridStartIndex[2])*Scale[2]-0.5;
-					R = sqrt(POW(X,2)+POW(Y,2));
-					if (R*LengthUnits > rc)
-						ElectricField[field][index] = -B0Strength*R;
-					else
-						ElectricField[field][index] = -B0Strength/rc/LengthUnits*R*R;
+		float X,Y,Z,R,rc = 0.002*Mpc/LengthUnits;
+		int index,field;
+		for (field=0;field<3;field++){
+			for( k=0;k<ElectricDims[field][2];k++){
+				for( j=0;j<ElectricDims[field][1];j++){
+					for( i=0;i<ElectricDims[field][0];i++){
+						index = i+ElectricDims[field][0]*(j+ElectricDims[field][1]*k);
+						if (field==2){
+							X = (i-GridStartIndex[0])*Scale[0]-0.5-0.5*Scale[0];
+							Y = (j-GridStartIndex[1])*Scale[1]-0.5-0.5*Scale[1];
+							Z = (k-GridStartIndex[2])*Scale[2]-0.5-0.5*Scale[2];
+							R = sqrt(POW(X,2)+POW(Y,2));
+							if (R > rc){
+								ElectricField[field][index] = -B0Strength*R/MagneticUnits/POW(cosh(Z*LengthUnits/ScaleHeightz/Mpc),2);
+							}
+							else{
+								ElectricField[field][index] = (-2*B0Strength/rc*R*R
+                                                               +B0Strength/(rc*rc)*R*R*R)/MagneticUnits/POW(cosh(Z*LengthUnits/ScaleHeightz/Mpc),2);
+							}
+						}
+						else
+							ElectricField[field][index] = 0.0;
+					}
 				}
+			}
+		}
 		if( this->MHD_Curl(GridStartIndex, GridEndIndex, 0) == FAIL ){
 			fprintf(stderr," error occored in MHD_Curl\n"); 
 			return FAIL;
 		}
-	 }
+	 } // end if 2
+     else if (B0Flag == 3){ //Toroidal field with ambient treatment
+         float X,Y,Z,R,rc = 0.002*Mpc/LengthUnits,rh1 = 0.010*Mpc/LengthUnits,rh2 = 0.012*Mpc/LengthUnits,A,B,C,D;
+         int index,field;
+         A = (0.1*(0. - 1.0*B0Strength*POW(rh1,9)*POW(rh2,2) +
+                                   37.0*B0Strength*POW(rh1,8)*POW(rh2,3) + 1.*B0Strength*POW(rh1,11)*POW(rh2,3) -
+                                   25.0*B0Strength*POW(rh1,7)*POW(rh2,4) - 2.0*B0Strength*POW(rh1,10)*POW(rh2,4) -
+                                   47.0*B0Strength*POW(rh1,6)*POW(rh2,5) + 10.0*B0Strength*POW(rh1,9)*POW(rh2,5) +
+                                   26.0*B0Strength*POW(rh1,5)*POW(rh2,6) - 18.0*B0Strength*POW(rh1,8)*POW(rh2,6) +
+                                   10.0*B0Strength*POW(rh1,4)*POW(rh2,7) - 1.0*B0Strength*POW(rh1,7)*POW(rh2,7) +
+                                   20.0*B0Strength*POW(rh1,6)*POW(rh2,8) - 10.0*B0Strength*POW(rh1,5)*POW(rh2,9)))/
+         (-1.*POW(rh1,9)*POW(rh2,2) + 1.*POW(rh1,8)*POW(rh2,3) + 1.*POW(rh1,11)*POW(rh2,3) + 2.*POW(rh1,7)*POW(rh2,4) -
+          2.*POW(rh1,10)*POW(rh2,4) - 2.*POW(rh1,6)*POW(rh2,5) + 1.*POW(rh1,9)*POW(rh2,5) - 1.*POW(rh1,5)*POW(rh2,6) +
+          1.*POW(rh1,4)*POW(rh2,7) - 1.*POW(rh1,7)*POW(rh2,7) + 2.*POW(rh1,6)*POW(rh2,8) - 1.*POW(rh1,5)*POW(rh2,9));
+         B = (-1.*(1.8*B0Strength*POW(rh1,6)*POW(rh2,3) -
+                   5.4*B0Strength*POW(rh1,5)*POW(rh2,4) + 1.8*B0Strength*POW(rh1,8)*POW(rh2,4) +
+                   10.8*B0Strength*POW(rh1,3)*POW(rh2,6) -
+                   10.8*B0Strength*POW(rh1,6)*POW(rh2,6) + 1.8*B0Strength*POW(rh1,9)*POW(rh2,6) -
+                   5.4*B0Strength*POW(rh1,2)*POW(rh2,7) + 10.8*B0Strength*POW(rh1,5)*POW(rh2,7) -
+                   3.6*B0Strength*POW(rh1,8)*POW(rh2,7) - 5.4*B0Strength*rh1*POW(rh2,8) +
+                   5.4*B0Strength*POW(rh1,4)*POW(rh2,8) +
+                   3.6*B0Strength*POW(rh2,9) - 10.8*B0Strength*POW(rh1,3)*POW(rh2,9) +
+                   3.6*B0Strength*POW(rh1,6)*POW(rh2,9) + 3.6*B0Strength*POW(rh1,2)*POW(rh2,10) -
+                   1.8*B0Strength*POW(rh1,5)*POW(rh2,10)))/
+         ((1.*POW(rh1,2)*rh2 - 3.*rh1*POW(rh2,2) + 1.*POW(rh1,4)*POW(rh2,2) + 2.*POW(rh2,3) - 1.*POW(rh1,3)*POW(rh2,3))*
+          (-1.*POW(rh1,5)*POW(rh2,2) + 1.*POW(rh1,4)*POW(rh2,3) + 1.*POW(rh1,7)*POW(rh2,3) + 2.*POW(rh1,3)*POW(rh2,4) -
+           2.*POW(rh1,6)*POW(rh2,4) - 2.*POW(rh1,2)*POW(rh2,5) + 1.*POW(rh1,5)*POW(rh2,5) - 1.*rh1*POW(rh2,6) + 1.*POW(rh2,7) -
+           1.*POW(rh1,3)*POW(rh2,7) + 2.*POW(rh1,2)*POW(rh2,8) - 1.*rh1*POW(rh2,9)));
+         C = (-1.*(-0.9*B0Strength*POW(rh1,9)*POW(rh2,4) +
+                   3.6*B0Strength*POW(rh1,8)*POW(rh2,5) - 1.8*B0Strength*POW(rh1,11)*POW(rh2,5)
+                    - 1.8*B0Strength*POW(rh1,7)*POW(rh2,6) +
+                   4.5*B0Strength*POW(rh1,10)*POW(rh2,6) - 0.9*B0Strength*POW(rh1,13)*POW(rh2,6) -
+                   9.0*B0Strength*POW(rh1,6)*POW(rh2,7) + 3.6*B0Strength*POW(rh1,9)*POW(rh2,7) +
+                   0.9*B0Strength*POW(rh1,12)*POW(rh2,7) + 10.8*B0Strength*POW(rh1,5)*POW(rh2,8) -
+                   16.2*B0Strength*POW(rh1,8)*POW(rh2,8) + 3.6*B0Strength*POW(rh1,11)*POW(rh2,8) +
+                   5.4*B0Strength*POW(rh1,4)*POW(rh2,9) + 1.8*B0Strength*POW(rh1,7)*POW(rh2,9) -
+                   3.6*B0Strength*POW(rh1,10)*POW(rh2,9) - 12.6*B0Strength*POW(rh1,3)*POW(rh2,10) +
+                   21.6*B0Strength*POW(rh1,6)*POW(rh2,10) - 5.4*B0Strength*POW(rh1,9)*POW(rh2,10) +
+                   1.8*B0Strength*POW(rh1,2)*POW(rh2,11) - 9.0*B0Strength*POW(rh1,5)*POW(rh2,11) +
+                   5.4*B0Strength*POW(rh1,8)*POW(rh2,11) + 4.5*B0Strength*rh1*POW(rh2,12) -
+                   12.6*B0Strength*POW(rh1,4)*POW(rh2,12) + 3.6*B0Strength*POW(rh1,7)*POW(rh2,12) -
+                   1.8*B0Strength*POW(rh2,13) + 7.2*B0Strength*POW(rh1,3)*POW(rh2,13) -
+                   3.6*B0Strength*POW(rh1,6)*POW(rh2,13) + 2.7*B0Strength*POW(rh1,2)*POW(rh2,14) -
+                   0.9*B0Strength*POW(rh1,5)*POW(rh2,14) - 1.8*B0Strength*rh1*POW(rh2,15) + 0.9*B0Strength*POW(rh1,4)*POW(rh2,15)))/
+         ((1.*POW(rh1,2) - 1.*POW(rh2,2))*(1.*POW(rh1,2)*rh2 - 1.*POW(rh2,3))*
+          (1.*POW(rh1,2)*rh2 - 3.*rh1*POW(rh2,2) + 1.*POW(rh1,4)*POW(rh2,2) + 2.*POW(rh2,3) - 1.*POW(rh1,3)*POW(rh2,3))*
+          (-1.*POW(rh1,5)*POW(rh2,2) + 1.*POW(rh1,4)*POW(rh2,3) + 1.*POW(rh1,7)*POW(rh2,3) + 2.*POW(rh1,3)*POW(rh2,4) -
+           2.*POW(rh1,6)*POW(rh2,4) - 2.*POW(rh1,2)*POW(rh2,5) + 1.*POW(rh1,5)*POW(rh2,5) - 1.*rh1*POW(rh2,6) + 1.*POW(rh2,7) -
+           1.*POW(rh1,3)*POW(rh2,7) + 2.*POW(rh1,2)*POW(rh2,8) - 1.*rh1*POW(rh2,9)));
+         D = (-1.*(0. + 0.45*B0Strength*POW(rh1,10)*POW(rh2,5) - 1.8*B0Strength*POW(rh1,9)*POW(rh2,6) +
+                   0.45*B0Strength*POW(rh1,12)*POW(rh2,6) + 0.9*B0Strength*POW(rh1,8)*POW(rh2,7) -
+                   0.9*B0Strength*POW(rh1,11)*POW(rh2,7) + 4.5*B0Strength*POW(rh1,7)*POW(rh2,8) -
+                   0.9*B0Strength*POW(rh1,10)*POW(rh2,8) - 5.4*B0Strength*POW(rh1,6)*POW(rh2,9) +
+                   2.7*B0Strength*POW(rh1,9)*POW(rh2,9) - 2.7*B0Strength*POW(rh1,5)*POW(rh2,10) +
+                   6.3*B0Strength*POW(rh1,4)*POW(rh2,11) - 2.7*B0Strength*POW(rh1,7)*POW(rh2,11) -
+                   0.9*B0Strength*POW(rh1,3)*POW(rh2,12) + 0.9*B0Strength*POW(rh1,6)*POW(rh2,12) -
+                   2.25*B0Strength*POW(rh1,2)*POW(rh2,13) + 0.9*B0Strength*POW(rh1,5)*POW(rh2,13) +
+                   0.9*B0Strength*rh1*POW(rh2,14) - 0.45*B0Strength*POW(rh1,4)*POW(rh2,14)))/
+         ((1.*POW(rh1,2) - 1.*POW(rh2,2))*(1.*POW(rh1,2)*rh2 - 1.*POW(rh2,3))*
+          (1.*POW(rh1,2)*rh2 - 3.*rh1*POW(rh2,2) + 1.*POW(rh1,4)*POW(rh2,2) + 2.*POW(rh2,3) - 1.*POW(rh1,3)*POW(rh2,3))*
+          (-1.*POW(rh1,5)*POW(rh2,2) + 1.*POW(rh1,4)*POW(rh2,3) + 1.*POW(rh1,7)*POW(rh2,3) + 2.*POW(rh1,3)*POW(rh2,4) -
+           2.*POW(rh1,6)*POW(rh2,4) - 2.*POW(rh1,2)*POW(rh2,5) + 1.*POW(rh1,5)*POW(rh2,5) - 1.*rh1*POW(rh2,6) + 1.*POW(rh2,7) -
+           1.*POW(rh1,3)*POW(rh2,7) + 2.*POW(rh1,2)*POW(rh2,8) - 1.*rh1*POW(rh2,9)));
+         for (field=0;field<3;field++){
+             for( k=0;k<ElectricDims[field][2];k++){
+                 for( j=0;j<ElectricDims[field][1];j++){
+                     for( i=0;i<ElectricDims[field][0];i++){
+                         index = i+ElectricDims[field][0]*(j+ElectricDims[field][1]*k);
+                         if (field==2){
+                             X = (i-GridStartIndex[0])*Scale[0]-0.5-0.5*Scale[0];
+                             Y = (j-GridStartIndex[1])*Scale[1]-0.5-0.5*Scale[1];
+                             Z = (k-GridStartIndex[2])*Scale[2]-0.5-0.5*Scale[2];
+                             R = sqrt(POW(X,2)+POW(Y,2));
+                             if (R > rc && R < rh1)
+                                 ElectricField[field][index] = -B0Strength*R/MagneticUnits/POW(cosh(Z*LengthUnits/ScaleHeightz/Mpc),2);
+                             else if (R <= rc)
+                                 ElectricField[field][index] = (-2*B0Strength/rc*R*R
+                                                                +B0Strength/(rc*rc)*R*R*R)/MagneticUnits/POW(cosh(Z*LengthUnits/ScaleHeightz/Mpc),2);
+                             else if (R >= rh1 && R < rh2)
+								 ElectricField[field][index] = -(A*R+B*R*R+C*R*R*R+D*R*R*R*R)/MagneticUnits/POW(cosh(Z*LengthUnits/ScaleHeightz/Mpc),2);
+							 else
+								 ElectricField[field][index] = -B0Strength*R/10./MagneticUnits/POW(cosh(Z*LengthUnits/ScaleHeightz/Mpc),2);
+                         }
+                         else
+                             ElectricField[field][index] = 0.0;
+                     }
+                 }
+             }
+         }
+         if( this->MHD_Curl(GridStartIndex, GridEndIndex, 0) == FAIL ){
+             fprintf(stderr," error occored in MHD_Curl\n"); 
+             return FAIL;
+         }
+     } // endif 3
 	 this->CenterMagneticField();
 	 float *DivB=NULL;
 	 MHD_Diagnose("Post Initialize Grid", DivB);
