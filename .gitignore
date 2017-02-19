@@ -1,0 +1,4 @@
+Make.mach.linux-gnu
+*.o
+*/*.o
+enzo.exe

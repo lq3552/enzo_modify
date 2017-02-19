@@ -3,7 +3,7 @@ void auto_show_compile_options(void) {
    FILE *opf;
    opf = fopen("Enzo_Build", "w");
    fprintf(opf, "### Enzo build information:\n");
-   fprintf(opf, "### Compiled: Sun Feb 12 16:17:50 2017\n");
+   fprintf(opf, "### Compiled: Sun Feb 19 13:24:20 2017\n");
    fprintf(opf, "### Machine name: linux-gnu\n");
    fprintf(opf, "### Branch: (week-of-code)\n");
    fprintf(opf, "### Changeset: 240af05dd312+\n");
@@ -61,7 +61,7 @@ void auto_show_compile_options(void) {
    opf = fopen("Enzo_Build_Diff", "w");
    fprintf(opf, "diff -r 240af05dd312 src/enzo/EvolveLevel.C\n");
    fprintf(opf, "--- a/src/enzo/EvolveLevel.C	Wed Dec 14 11:11:05 2016 -0500\n");
-   fprintf(opf, "+++ b/src/enzo/EvolveLevel.C	Sun Feb 12 16:17:50 2017 -0500\n");
+   fprintf(opf, "+++ b/src/enzo/EvolveLevel.C	Sun Feb 19 13:24:19 2017 -0500\n");
    fprintf(opf, "@@ -39,7 +39,6 @@\n");
    fprintf(opf, " /                computing the timestep, output, handling fluxes\n");
    fprintf(opf, " /  modified10: July, 2009 by Sam Skillman\n");
@@ -83,7 +83,7 @@ void auto_show_compile_options(void) {
    fprintf(opf, "  \n");
    fprintf(opf, "diff -r 240af05dd312 src/enzo/EvolvePhotons.C\n");
    fprintf(opf, "--- a/src/enzo/EvolvePhotons.C	Wed Dec 14 11:11:05 2016 -0500\n");
-   fprintf(opf, "+++ b/src/enzo/EvolvePhotons.C	Sun Feb 12 16:17:50 2017 -0500\n");
+   fprintf(opf, "+++ b/src/enzo/EvolvePhotons.C	Sun Feb 19 13:24:19 2017 -0500\n");
    fprintf(opf, "@@ -590,7 +590,7 @@\n");
    fprintf(opf, " \n");
    fprintf(opf, " 	    int RTCoupledSolverIntermediateStep = TRUE;\n");
@@ -104,7 +104,7 @@ void auto_show_compile_options(void) {
    fprintf(opf, " \n");
    fprintf(opf, "diff -r 240af05dd312 src/enzo/Grid.h\n");
    fprintf(opf, "--- a/src/enzo/Grid.h	Wed Dec 14 11:11:05 2016 -0500\n");
-   fprintf(opf, "+++ b/src/enzo/Grid.h	Sun Feb 12 16:17:50 2017 -0500\n");
+   fprintf(opf, "+++ b/src/enzo/Grid.h	Sun Feb 19 13:24:19 2017 -0500\n");
    fprintf(opf, "@@ -571,7 +571,8 @@\n");
    fprintf(opf, " \n");
    fprintf(opf, " /* Baryons: compute the cooling time. */\n");
@@ -162,7 +162,7 @@ void auto_show_compile_options(void) {
    fprintf(opf, " \n");
    fprintf(opf, "diff -r 240af05dd312 src/enzo/Grid_ComputeCoolingTime.C\n");
    fprintf(opf, "--- a/src/enzo/Grid_ComputeCoolingTime.C	Wed Dec 14 11:11:05 2016 -0500\n");
-   fprintf(opf, "+++ b/src/enzo/Grid_ComputeCoolingTime.C	Sun Feb 12 16:17:50 2017 -0500\n");
+   fprintf(opf, "+++ b/src/enzo/Grid_ComputeCoolingTime.C	Sun Feb 19 13:24:19 2017 -0500\n");
    fprintf(opf, "@@ -14,7 +14,7 @@\n");
    fprintf(opf, " ************************************************************************/\n");
    fprintf(opf, "  \n");
@@ -442,7 +442,7 @@ void auto_show_compile_options(void) {
    fprintf(opf, "        &CoolData.SolarMetalFractionByMass,\n");
    fprintf(opf, "diff -r 240af05dd312 src/enzo/Grid_ComputeTimeStep.C\n");
    fprintf(opf, "--- a/src/enzo/Grid_ComputeTimeStep.C	Wed Dec 14 11:11:05 2016 -0500\n");
-   fprintf(opf, "+++ b/src/enzo/Grid_ComputeTimeStep.C	Sun Feb 12 16:17:50 2017 -0500\n");
+   fprintf(opf, "+++ b/src/enzo/Grid_ComputeTimeStep.C	Sun Feb 19 13:24:19 2017 -0500\n");
    fprintf(opf, "@@ -426,7 +426,7 @@\n");
    fprintf(opf, "   /* Cooling time */\n");
    fprintf(opf, "   if (UseCoolingTimestep == TRUE) {\n");
@@ -454,7 +454,7 @@ void auto_show_compile_options(void) {
    fprintf(opf, " \n");
    fprintf(opf, "diff -r 240af05dd312 src/enzo/Grid_GrackleWrapper.C\n");
    fprintf(opf, "--- a/src/enzo/Grid_GrackleWrapper.C	Wed Dec 14 11:11:05 2016 -0500\n");
-   fprintf(opf, "+++ b/src/enzo/Grid_GrackleWrapper.C	Sun Feb 12 16:17:50 2017 -0500\n");
+   fprintf(opf, "+++ b/src/enzo/Grid_GrackleWrapper.C	Sun Feb 19 13:24:19 2017 -0500\n");
    fprintf(opf, "@@ -36,7 +36,7 @@\n");
    fprintf(opf, " {\n");
    fprintf(opf, " \n");
@@ -686,7 +686,7 @@ void auto_show_compile_options(void) {
    fprintf(opf, "   delete [] g_grid_start;\n");
    fprintf(opf, "diff -r 240af05dd312 src/enzo/Grid_IdentifyPhysicalQuantities.C\n");
    fprintf(opf, "--- a/src/enzo/Grid_IdentifyPhysicalQuantities.C	Wed Dec 14 11:11:05 2016 -0500\n");
-   fprintf(opf, "+++ b/src/enzo/Grid_IdentifyPhysicalQuantities.C	Sun Feb 12 16:17:50 2017 -0500\n");
+   fprintf(opf, "+++ b/src/enzo/Grid_IdentifyPhysicalQuantities.C	Sun Feb 19 13:24:19 2017 -0500\n");
    fprintf(opf, "@@ -263,6 +263,70 @@\n");
    fprintf(opf, " \n");
    fprintf(opf, " }\n");
@@ -760,7 +760,7 @@ void auto_show_compile_options(void) {
    fprintf(opf, " \n");
    fprintf(opf, "diff -r 240af05dd312 src/enzo/Grid_MultiSpeciesHandler.C\n");
    fprintf(opf, "--- a/src/enzo/Grid_MultiSpeciesHandler.C	Wed Dec 14 11:11:05 2016 -0500\n");
-   fprintf(opf, "+++ b/src/enzo/Grid_MultiSpeciesHandler.C	Sun Feb 12 16:17:50 2017 -0500\n");
+   fprintf(opf, "+++ b/src/enzo/Grid_MultiSpeciesHandler.C	Sun Feb 19 13:24:19 2017 -0500\n");
    fprintf(opf, "@@ -31,7 +31,7 @@\n");
    fprintf(opf, "   LCAPERF_START(\"grid_MultiSpeciesHandler\");\n");
    fprintf(opf, " \n");
@@ -772,7 +772,7 @@ void auto_show_compile_options(void) {
    fprintf(opf, "     }\n");
    fprintf(opf, "diff -r 240af05dd312 src/enzo/InitializeNew.C\n");
    fprintf(opf, "--- a/src/enzo/InitializeNew.C	Wed Dec 14 11:11:05 2016 -0500\n");
-   fprintf(opf, "+++ b/src/enzo/InitializeNew.C	Sun Feb 12 16:17:50 2017 -0500\n");
+   fprintf(opf, "+++ b/src/enzo/InitializeNew.C	Sun Feb 19 13:24:19 2017 -0500\n");
    fprintf(opf, "@@ -100,6 +100,8 @@\n");
    fprintf(opf, "                         TopGridData &MetaData);\n");
    fprintf(opf, " int GalaxySimulationInitialize(FILE *fptr, FILE *Outfptr, HierarchyEntry &TopGrid,\n");
@@ -793,9 +793,19 @@ void auto_show_compile_options(void) {
    fprintf(opf, "   // 35) Shearing Box Simulation\n");
    fprintf(opf, "   if (ProblemType == 35) \n");
    fprintf(opf, "     ret = ShearingBoxInitialize(fptr, Outfptr, TopGrid, MetaData);\n");
+   fprintf(opf, "@@ -871,7 +877,8 @@\n");
+   fprintf(opf, "       ProblemType != 31 &&  // BWO (isolated galaxies)\n");
+   fprintf(opf, "       ProblemType != 60 &&\n");
+   fprintf(opf, "       ProblemType != 106 && //AK\n");
+   fprintf(opf, "-      ProblemType != 108)   //Yuan (Cluster)\n");
+   fprintf(opf, "+      ProblemType != 108 &&   //Yuan (Cluster)\n");
+   fprintf(opf, "+	  ProblemType != 302)\n");
+   fprintf(opf, "     ConvertTotalEnergyToGasEnergy(&TopGrid);\n");
+   fprintf(opf, "   \n");
+   fprintf(opf, "   // If using StarParticles, set the number to zero \n");
    fprintf(opf, "diff -r 240af05dd312 src/enzo/Make.config.objects\n");
    fprintf(opf, "--- a/src/enzo/Make.config.objects	Wed Dec 14 11:11:05 2016 -0500\n");
-   fprintf(opf, "+++ b/src/enzo/Make.config.objects	Sun Feb 12 16:17:50 2017 -0500\n");
+   fprintf(opf, "+++ b/src/enzo/Make.config.objects	Sun Feb 19 13:24:19 2017 -0500\n");
    fprintf(opf, "@@ -15,6 +15,9 @@\n");
    fprintf(opf, " #-----------------------------------------------------------------------\n");
    fprintf(opf, " \n");
@@ -808,7 +818,7 @@ void auto_show_compile_options(void) {
    fprintf(opf, "         acml_st1.o \\\n");
    fprintf(opf, "diff -r 240af05dd312 src/enzo/Make.mach.linux-gnu\n");
    fprintf(opf, "--- a/src/enzo/Make.mach.linux-gnu	Wed Dec 14 11:11:05 2016 -0500\n");
-   fprintf(opf, "+++ b/src/enzo/Make.mach.linux-gnu	Sun Feb 12 16:17:50 2017 -0500\n");
+   fprintf(opf, "+++ b/src/enzo/Make.mach.linux-gnu	Sun Feb 19 13:24:19 2017 -0500\n");
    fprintf(opf, "@@ -13,16 +13,17 @@\n");
    fprintf(opf, " #\n");
    fprintf(opf, " #=======================================================================\n");
@@ -867,7 +877,7 @@ void auto_show_compile_options(void) {
    fprintf(opf, "+MACH_LIBS_GRACKLE = $(LOCAL_LIBS_GRACKLE)\n");
    fprintf(opf, "diff -r 240af05dd312 src/enzo/ReadParameterFile.C\n");
    fprintf(opf, "--- a/src/enzo/ReadParameterFile.C	Wed Dec 14 11:11:05 2016 -0500\n");
-   fprintf(opf, "+++ b/src/enzo/ReadParameterFile.C	Sun Feb 12 16:17:50 2017 -0500\n");
+   fprintf(opf, "+++ b/src/enzo/ReadParameterFile.C	Sun Feb 19 13:24:19 2017 -0500\n");
    fprintf(opf, "@@ -534,6 +534,22 @@\n");
    fprintf(opf, " \n");
    fprintf(opf, " #ifdef USE_GRACKLE\n");
@@ -1044,7 +1054,7 @@ void auto_show_compile_options(void) {
    fprintf(opf, "        or RadiationFieldType to be on - both are taken care of in\n");
    fprintf(opf, "diff -r 240af05dd312 src/enzo/SetDefaultGlobalValues.C\n");
    fprintf(opf, "--- a/src/enzo/SetDefaultGlobalValues.C	Wed Dec 14 11:11:05 2016 -0500\n");
-   fprintf(opf, "+++ b/src/enzo/SetDefaultGlobalValues.C	Sun Feb 12 16:17:50 2017 -0500\n");
+   fprintf(opf, "+++ b/src/enzo/SetDefaultGlobalValues.C	Sun Feb 19 13:24:19 2017 -0500\n");
    fprintf(opf, "@@ -489,34 +489,31 @@\n");
    fprintf(opf, "   CloudyCoolingData.CloudyElectronFractionFactor = 9.153959e-3; // calculated using Cloudy 07.02 abundances\n");
    fprintf(opf, " \n");
@@ -1117,7 +1127,7 @@ void auto_show_compile_options(void) {
    fprintf(opf, "   OldShearMethod                   = 0;            \n");
    fprintf(opf, "diff -r 240af05dd312 src/enzo/WriteParameterFile.C\n");
    fprintf(opf, "--- a/src/enzo/WriteParameterFile.C	Wed Dec 14 11:11:05 2016 -0500\n");
-   fprintf(opf, "+++ b/src/enzo/WriteParameterFile.C	Sun Feb 12 16:17:50 2017 -0500\n");
+   fprintf(opf, "+++ b/src/enzo/WriteParameterFile.C	Sun Feb 19 13:24:19 2017 -0500\n");
    fprintf(opf, "@@ -491,19 +491,15 @@\n");
    fprintf(opf, "   if (DrivenFlowProfile)\n");
    fprintf(opf, "     Forcing.WriteParameters(fptr);\n");
@@ -1160,7 +1170,7 @@ void auto_show_compile_options(void) {
    fprintf(opf, "   fprintf(fptr, \"JeansRefinementColdTemperature  = %%\"FSYM\"\\n\",\n");
    fprintf(opf, "diff -r 240af05dd312 src/enzo/global_data.h\n");
    fprintf(opf, "--- a/src/enzo/global_data.h	Wed Dec 14 11:11:05 2016 -0500\n");
-   fprintf(opf, "+++ b/src/enzo/global_data.h	Sun Feb 12 16:17:50 2017 -0500\n");
+   fprintf(opf, "+++ b/src/enzo/global_data.h	Sun Feb 19 13:24:19 2017 -0500\n");
    fprintf(opf, "@@ -502,6 +502,10 @@\n");
    fprintf(opf, " EXTERN int UseMinimumPressureSupport;\n");
    fprintf(opf, " EXTERN float MinimumPressureSupportParameter;\n");
@@ -1174,7 +1184,7 @@ void auto_show_compile_options(void) {
    fprintf(opf, " EXTERN FLOAT StaticRefineRegionRightEdge[MAX_STATIC_REGIONS][MAX_DIMENSION];\n");
    fprintf(opf, "diff -r 240af05dd312 src/enzo/typedefs.h\n");
    fprintf(opf, "--- a/src/enzo/typedefs.h	Wed Dec 14 11:11:05 2016 -0500\n");
-   fprintf(opf, "+++ b/src/enzo/typedefs.h	Sun Feb 12 16:17:50 2017 -0500\n");
+   fprintf(opf, "+++ b/src/enzo/typedefs.h	Sun Feb 19 13:24:19 2017 -0500\n");
    fprintf(opf, "@@ -169,8 +169,10 @@\n");
    fprintf(opf, " \n");
    fprintf(opf, "   /* Cosmic Ray Energy Density */\n");
