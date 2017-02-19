@@ -851,6 +851,8 @@ EXTERN float HaloRedshift;
 EXTERN double HaloCentralDensity;
 EXTERN double HaloVirialRadius;
 EXTERN float ExternalGravityConstant;
+EXTERN float ExternalGravityConstant2;
+EXTERN float ExternalGravityDiskRadius;
 EXTERN float ExternalGravityDensity;
 EXTERN FLOAT ExternalGravityPosition[MAX_DIMENSION];
 EXTERN double ExternalGravityRadius;

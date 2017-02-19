@@ -1,14 +1,14 @@
 
-CPP = /apps/compilers/gcc/5.2.0/bin/cpp
-CC  = /apps/mpi/gcc/5.2.0/openmpi/1.10.2/bin/mpicc
-CXX = /apps/mpi/gcc/5.2.0/openmpi/1.10.2/bin/mpic++
-FC  = /apps/compilers/gcc/5.2.0/bin/gfortran
-F90 = /apps/compilers/gcc/5.2.0/bin/gfortran
-LD  = /apps/mpi/gcc/5.2.0/openmpi/1.10.2/bin/mpic++
+CPP = /usr/bin/cpp
+CC  = /usr/local/bin/mpicc
+CXX = /usr/local/bin/mpic++
+FC  = /usr/local/bin/gfortran
+F90 = /usr/local/bin/gfortran
+LD  = /usr/local/bin/mpic++
 
 DEFINES = -DLINUX -DH5_USE_16_API   -D__max_subgrids=100000 -D__max_baryons=30 -D__max_cpu_per_node=8 -D__memory_pool_size=100000 -DINITS64 -DLARGE_INTS -DCONFIG_PINT_8 -DIO_32    -DUSE_MPI   -DCONFIG_PFLOAT_8 -DCONFIG_BFLOAT_8  -DUSE_HDF5_GROUPS   -DTRANSFER   -DNEW_GRID_IO -DFAST_SIB      -DENZO_PERFORMANCE  -DUSE_GRACKLE  -DSAB
 
-INCLUDES = -I/apps/hdf5/1.8.9/include  -I/apps/gcc/5.2.0/libz/1.2.8/include        -I/ufrc/tan/pg3552/local/include    -I.
+INCLUDES = -I/usr/local//include        -I/usr/local/include    -I.
 
 CPPFLAGS = -P -traditional 
 CFLAGS   =  -O2
@@ -17,5 +17,5 @@ FFLAGS   = -fno-second-underscore -ffixed-line-length-132 -O2
 F90FLAGS = -fno-second-underscore -O2
 LDFLAGS  =  -O2
 
-LIBS     = -L/apps/hdf5/1.8.9/lib -lhdf5 -lz  -lgfortran  -L/apps/gcc/5.2.0/libz/1.2.8/lib -lz        -L/ufrc/tan/pg3552/local/lib -lgrackle
+LIBS     = -L/usr/local//lib -lhdf5 -lz  -L/usr/local/lib/gcc/5 -lgfortran         -L/usr/local/lib -lgrackle
 

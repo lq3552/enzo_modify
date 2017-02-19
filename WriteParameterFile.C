@@ -426,6 +426,8 @@ int WriteParameterFile(FILE *fptr, TopGridData &MetaData, char *name = NULL)
 
   fprintf(fptr, "ExternalGravity           = %"ISYM"\n",ExternalGravity); 
   fprintf(fptr, "ExternalGravityConstant     = %"FSYM"\n",ExternalGravityConstant);
+  fprintf(fptr, "ExternalGravityConstant2     = %"FSYM"\n",ExternalGravityConstant2);
+  fprintf(fptr, "ExternalGravityDiskRadius     = %"FSYM"\n",ExternalGravityDiskRadius);
   fprintf(fptr, "ExternalGravityRadius     = %"FSYM"\n",ExternalGravityRadius); 
   fprintf(fptr, "ExternalGravityDensity     = %"FSYM"\n",ExternalGravityDensity);
   fprintf(fptr, "ExternalGravityPosition   = ");

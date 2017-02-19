@@ -6,3 +6,5 @@ auto_show_*.C
 out.compile
 ffte_param.mod
 singleton.mod
+DEPEND.bak
+DEPEND

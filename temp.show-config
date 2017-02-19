@@ -1,5 +1,5 @@
 
-   MACHINE: Generic Linux
+   MACHINE: Generic Ubuntu 8.04
    MACHINE-NAME: linux-gnu
 
    PARAMETER_MAX_SUBGRIDS  [max-subgrids-###]                : 100000

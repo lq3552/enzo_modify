@@ -42,8 +42,8 @@ int grid::AddExternalPotentialField(float *potential)
   /* declarations */
 
   int i, j, k, dim, size;
-  double CircularVelocity, xpos, ypos, zpos;
-  double rsquared, zsquared, rcore;
+  double CircularVelocity, CircularVelocity2, xpos, ypos, zpos;
+  double rsquared, zsquared, rcore,rdisk,slope;
   double ExternalPotential;
 
   /* Get unit conversions */
@@ -97,6 +97,40 @@ int grid::AddExternalPotentialField(float *potential)
 	  
 	  ExternalPotential = 0.5*pow(CircularVelocity,2)*
 	    log(pow(rcore,2)*pow(rcore,-2)+rsquared*pow(rcore,-2)+zsquared*pow(rcore,-2)/pow(q,2));
+
+	}
+
+	if (ExternalGravity == 11) {
+	  
+	  /* Potential taken from `Logarithmic Potentials' in Binney+Tremaine, p46, chap2 
+		 plus a potential, generating a rotation curve ~ (v0+k*r)
+	     ExternalGravityConstant is the circular velocity at r~0 in code units
+		 ExternalGravityConstant2 is the circular velocity at r=DR in code units
+		 ExternalGravityDiskRadius is the disk radius in code units
+	     ExternalGravityRadius is radius of inner region where velocity drops to zero, in code units */
+
+	  float q = 0.7; // controls shape of potential, see B+T
+	 	  
+	  /* 0.5 kpc for Tasker&Tan disk model */
+	  rcore = ExternalGravityRadius*LengthUnits; // [cm]
+      /* 12 kpc for Li&Tan disk model */
+	  rdisk = ExternalGravityDiskRadius*LengthUnits;
+
+	  /* 100 km/s, 200 km/s for Li&Tan disk model */
+	  CircularVelocity = ExternalGravityConstant*VelocityUnits; // [CGS]
+	  CircularVelocity2 = ExternalGravityConstant2*VelocityUnits;
+	  slope = (CircularVelocity2-CircularVelocity)/rdisk;
+
+	  float constant = 0.5*pow(CircularVelocity,2.0)*log(pow(rcore,-2));
+
+	  rsquared = double(xpos*LengthUnits)*double(xpos*LengthUnits) + 
+	             double(ypos*LengthUnits)*double(ypos*LengthUnits);
+	  
+	  zsquared = double(zpos*LengthUnits)*double(zpos*LengthUnits);
+	  
+	  ExternalPotential = 0.5*pow(CircularVelocity,2)*
+	    log(pow(rcore,2)*pow(rcore,-2)+rsquared*pow(rcore,-2)+zsquared*pow(rcore,-2)/pow(q,2))+
+		2.0*slope*CircularVelocity*sqrt(rsquared)+0.5*pow(slope,2)*rsquared;
 
 	}
 

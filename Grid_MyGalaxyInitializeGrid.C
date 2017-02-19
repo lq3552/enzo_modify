@@ -69,6 +69,7 @@ int grid::MyGalaxyInitializeGrid(FLOAT DiskRadius,
  int DeNum, HINum, HIINum, HeINum, HeIINum, HeIIINum, HMNum, H2INum, H2IINum,
    DINum, DIINum, HDINum, B1Num, B2Num, B3Num, PhiNum,G0Num,ZetaNum;
  float DiskDensity, DiskVelocityMag;
+ float slope = (ExternalGravityConstant2-ExternalGravityConstant)/ExternalGravityDiskRadius;
  float Scale[3];
 
   /* Record field type for FindField */
@@ -188,8 +189,6 @@ int grid::MyGalaxyInitializeGrid(FLOAT DiskRadius,
  density1 = sig1/(2*M_PI*GravConst*Q1*ScaleHeightz*Mpc); //[cgs]
  density2 = sig2/(2*M_PI*GravConst*Q2*ScaleHeightz*Mpc); //[cgs]
  //EOSSoundSpeed=sqrt(InitialTemperature/TemperatureUnits/mu); //code unit
- printf("soundspeed=%lf\n",EOSSoundSpeed);
- printf("ExternalGravityConstant=%lf\n",ExternalGravityConstant);
  
  printf("UseMHDCT = %d\n",UseMHDCT);
  /* MHD specific field initialize */
@@ -429,9 +428,21 @@ int grid::MyGalaxyInitializeGrid(FLOAT DiskRadius,
 
         /* Compute velocity magnitude. This assumes Logarithm Potential*/
           //Diskdensity=
-	    DiskVelocityMag = CircularVelocity*r/sqrt(POW(drad,2)+POW(ExternalGravityRadius,2)); //Code units
-          //(r>ExternalGravityRadius?CircularVelocity*drad/sqrt(POW(r,2)+POW(ExternalGravityRadius,2)):0.0)
-        kappa = sqrt(2)*DiskVelocityMag/r*sqrt(1+r/DiskVelocityMag*(CircularVelocity*POW(ExternalGravityRadius,2)/POW(POW(ExternalGravityRadius,2)+POW(r,2),3.0/2.0)))/TimeUnits; //check the units! Important
+		if (ExternalGravity == 10){
+			DiskVelocityMag = CircularVelocity*drad/sqrt(POW(drad,2)+POW(ExternalGravityRadius,2)); //Code units
+			kappa = sqrt(2)*DiskVelocityMag/r*sqrt(1+r/DiskVelocityMag*(CircularVelocity*POW(ExternalGravityRadius,2)/
+						POW(POW(ExternalGravityRadius,2)+POW(r,2),3.0/2.0)))/TimeUnits;
+		}
+		else if (ExternalGravity == 11){
+			DiskVelocityMag = sqrt(POW(CircularVelocity*drad,2)/(POW(drad,2)+POW(ExternalGravityRadius,2))+2*slope*CircularVelocity*drad+POW(slope*drad,2)); //Code units
+            kappa = sqrt(2)*DiskVelocityMag/drad*sqrt(1+drad/DiskVelocityMag*(POW(CircularVelocity,2)*drad*POW(ExternalGravityRadius,2) +
+                                                                        CircularVelocity*POW(POW(drad,2) + POW(ExternalGravityRadius,2),2)*slope +
+                                                                        drad*POW(POW(drad,2) + POW(ExternalGravityRadius,2),2)*POW(slope,2))/
+                                                   (POW(POW(drad,2) + POW(ExternalGravityRadius,2),2)*
+                                                    sqrt(drad*((POW(CircularVelocity,2)*drad)/
+                                                               (POW(drad,2) + POW(ExternalGravityRadius,2)) + 2*CircularVelocity*slope + 
+                                                               drad*POW(slope,2)))))/TimeUnits;
+		}
 	    if (dim == 0)
 	      { // So the density is an "average" of a whole cell ...
 		//CellMass = mygauss_mass(drad*LengthUnits,zheight*LengthUnits, xpos*LengthUnits, ypos*LengthUnits, zpos*LengthUnits, inv,
@@ -473,12 +484,14 @@ int grid::MyGalaxyInitializeGrid(FLOAT DiskRadius,
 	  }
       else {
           //set density field to balance background gravity
-          phi_G = 0.5*pow(CircularVelocity*VelocityUnits,2)
-              *log(pow(ExternalGravityRadius*LengthUnits,2)*pow(ExternalGravityRadius*LengthUnits,-2)
-              +pow(r*LengthUnits,2)*pow(ExternalGravityRadius*LengthUnits,-2)
-              +pow((z-DiskPosition[2])*LengthUnits,2)*pow(ExternalGravityRadius*LengthUnits,-2)/pow(q,2))
-              /pow(LengthUnits/TimeUnits,2);// Gravitational potential
-          if (i>=dd&&j>=dd&&k>=dd&&i<GridDimension[0]-dd&&j<GridDimension[1]-dd&&k<GridDimension[2]-dd)
+          phi_G = 0.5*pow(CircularVelocity,2)
+              *log(pow(ExternalGravityRadius,2)*pow(ExternalGravityRadius,-2)
+              +pow(drad,2)*pow(ExternalGravityRadius,-2)
+              +pow(z-DiskPosition[2],2)*pow(ExternalGravityRadius,-2)/pow(q,2));//code units
+		  if (ExternalGravity==11)
+			  phi_G += 2*slope*CircularVelocity*drad+0.5*POW(slope*drad,2);
+          
+		  if (i>=dd&&j>=dd&&k>=dd&&i<GridDimension[0]-dd&&j<GridDimension[1]-dd&&k<GridDimension[2]-dd)
               phi_T = phi_G-phi_S[ijk]/pow(LengthUnits/TimeUnits,2);
           else
               phi_T = phi_G; // here!!!
@@ -489,12 +502,14 @@ int grid::MyGalaxyInitializeGrid(FLOAT DiskRadius,
 	} // end: if (r < DiskRadius)
     else{
         //set density field to balance background gravity
-        phi_G = 0.5*pow(CircularVelocity*VelocityUnits,2)
-            *log(pow(ExternalGravityRadius*LengthUnits,2)*pow(ExternalGravityRadius*LengthUnits,-2)
-            +pow(r*LengthUnits,2)*pow(ExternalGravityRadius*LengthUnits,-2)
-            +pow((z-DiskPosition[2])*LengthUnits,2)*pow(ExternalGravityRadius*LengthUnits,-2)/pow(q,2))
-            /pow(LengthUnits/TimeUnits,2);// Gravitational potential
-          if (i>=dd&&j>=dd&&k>=dd&&i<GridDimension[0]-dd&&j<GridDimension[1]-dd&&k<GridDimension[2]-dd)
+		  phi_G = 0.5*pow(CircularVelocity,2)
+			  *log(pow(ExternalGravityRadius,2)*pow(ExternalGravityRadius,-2)
+			 +pow(r,2)*pow(ExternalGravityRadius,-2)
+			 +pow(z-DiskPosition[2],2)*pow(ExternalGravityRadius,-2)/pow(q,2));
+		  if (ExternalGravity==11)
+			  phi_G += 2*slope*CircularVelocity*r+0.5*POW(slope*r,2);
+          
+		  if (i>=dd&&j>=dd&&k>=dd&&i<GridDimension[0]-dd&&j<GridDimension[1]-dd&&k<GridDimension[2]-dd)
               phi_T = phi_G-phi_S[ijk]/pow(LengthUnits/TimeUnits,2);
           else
               phi_T = phi_G; // here!!!
