@@ -2,3 +2,7 @@ Make.mach.linux-gnu
 *.o
 */*.o
 enzo.exe
+auto_show_*.C
+out.compile
+ffte_param.mod
+singleton.mod
